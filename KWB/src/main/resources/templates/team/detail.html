@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Match Detail</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .detail-page {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+   
+
+    .tab {
+      border: 2px solid black;
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+
+    .lineup-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .lineup-card h3 {
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .pitcher-recommend h3 {
+      margin-bottom: 10px;
+    }
+
+    .pitcher-cards {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .pitcher-card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+      width: 30%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .pitcher-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="detail-page">
+
+
+    <!-- Match Info -->
+    
+    <!-- Team Tabs -->
+    <div class="team-tabs">
+      
+		<button class="tab" th:text="${teamName}">팀</button>
+    </div>
+
+    <!-- Lineup Table -->
+    <div class="lineup-card">
+      <h3>타자</h3>
+	  <table>
+	    <thead>
+	      <tr>
+	        <th>#</th>
+	        <th>이름</th>
+	        <th>타율</th>
+	        <th>출루율</th>
+	        <th>장타율</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr th:each="HitterDTO, stat : ${hitterList}">
+	        <td th:text="${stat.index + 1}">1</td>
+			<td th:text="${HitterDTO.player}">홍길동</td>
+			<td th:text="${HitterDTO.AVG}">0.259</td>
+			<td th:text="${HitterDTO.OBP}">0.333</td>
+			<td th:text="${HitterDTO.SLG}">0.393</td>
+	      </tr>
+	    </tbody>
+	  </table>
+      
+    </div>
+
+    <!-- Pitcher Recommendations -->
+	<div class="lineup-card">
+      <h3>투수</h3>
+	  <table>
+	          <thead>
+	            <tr>
+	              <th>#</th>
+	              <th>이름</th>
+	              <th>경기수</th>
+	              <th>승리</th>
+	              <th>패배</th>
+	              <th>이닝수</th>
+	              <th>자책점</th>
+	              <th>주자 허용율</th>
+	              
+	            </tr>
+	          </thead>
+	          <tbody>
+	            <tr >
+	              <td>1</td>
+	              <td>홍길동</td>
+	              <td>32</td>
+	              <td>128</td>
+	              <td >5</td>
+	              <td >3</td>
+	              <td >3</td>
+	              <td >0.5</td>
+	              
+	            </tr>
+	          </tbody>
+	        </table>
+	  
+    </div>
+
+  </div>
+  
+</body>
+</html>
