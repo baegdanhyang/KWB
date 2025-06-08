@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>main</title>
- 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -175,7 +177,7 @@
     <div class="month-item" data-month="10">10월</div>
     <div class="month-item" data-month="11">11월</div>
     <div class="month-item" data-month="12">12월</div>
-    <div class="month-item">포스트시즌</div>
+    <div class="month-item" data-month="13">포스트시즌</div>
   </div>
 
   <!-- 팀 선택 -->
@@ -231,15 +233,13 @@
       <div class="game-date" th:text="${gameDate.date}"></div>
 
       <div th:each="game : ${gameDate.games}" class="game-row">
-        <div class="prediction" th:text="'예측 최대승률 : ' + ${game.team1Prediction} + '%'"></div>
-        <a th:href="@{/match/detail}">
-          <div class="team-block" th:text="${game.team1Name}">팀 1</div>
+        <a th:href="@{'/match/detail?(hometeam=' + ${game.hometeam} + ',awayteam=' + ${game.awayteam} + ')'}">
+          <div class="team-block" th:text="${game.hometeam}">팀 1</div>
         </a>
         <div class="vs">vs</div>
-        <a th:href="@{/match/detail}">
-          <div class="team-block" th:text="${game.team2Name}">팀 2</div>
+        <a th:href="@{'/match/detail?(hometeam=' + ${game.hometeam} + ',awayteam=' + ${game.awayteam} + ')'}">
+          <div class="team-block" th:text="${game.awayteam}">팀 2</div>
         </a>
-        <div class="prediction" th:text="'예측 최대승률 : ' + ${game.team2Prediction} + '%'"></div>
       </div>
     </div>
   </div>
@@ -286,43 +286,41 @@ document.addEventListener('DOMContentLoaded', function () {
       item.classList.add('active');
 
       const selectedMonth = item.getAttribute('data-month'); // 선택된 월
+	  console.log("selectedMonth:", selectedMonth);  // 여기 꼭 찍어보기
+
 
       // Ajax 요청 보내기
-	      $.ajax({
-	        url: '/match/month', // 예: 컨트롤러에서 처리하는 URL
-	        method: 'GET',
-	        data: { month: selectedMonth },
-	        success: function (html) {
-	          $('.game-list-container').html(html);
-	        },
-	        error: function () {
-	          alert('경기 정보를 불러오는 데 실패했습니다.');
-	        }
-	      });
-	    });
+	  $.ajax({
+	      url: '/match/month',
+	      method: 'GET',
+	      data: { month: selectedMonth },
+	      success: function (data) {
+	        // data는 [{ date: '2025-06-01', games: [{ hometeam: '팀A', awayteam: '팀B' }, ...] }, ...]
+	        let html = '';
+
+	        data.forEach(function(gameDate) {
+	          html += `<div>`;
+	          html += `<div class="game-date">${gameDate.date}</div>`;
+
+	          gameDate.games.forEach(function(game) {
+	            html += `<div class="game-row">`;
+	            html += `<a href="/match/detail"><div class="team-block">${game.hometeam}</div></a>`;
+	            html += `<div class="vs">vs</div>`;
+	            html += `<a href="/match/detail"><div class="team-block">${game.awayteam}</div></a>`;
+	            html += `</div>`;
+	          });
+
+	          html += `</div>`;
+	        });
+
+	        $('.game-list-container').html(html);
+	      },
+	      error: function () {
+	        alert('경기 정보를 불러오는 데 실패했습니다.');
+	      }
 	  });
-
-  
-  // 렌더링 함수 (필요에 맞게 수정)
-  function renderGameList(games) {
-    const container = document.querySelector('.game-list-container');
-    container.innerHTML = ''; // 기존 내용 제거
-
-    games.forEach(game => {
-      const gameHtml = `
-        <div class="game-date">${game.date}</div>
-        <div class="game-row">
-          <div class="prediction">예측 최대승률 : ${game.prediction1}%</div>
-          <a href="/match/detail/${game.id}"><div class="team-block">${game.team1}</div></a>
-          <div class="vs">vs</div>
-          <a href="/match/detail/${game.id}"><div class="team-block">${game.team2}</div></a>
-          <div class="prediction">예측 최대승률 : ${game.prediction2}%</div>
-          <div class="arrow" id="arrowToggle">›</div>
-        </div>
-      `;
-      container.insertAdjacentHTML('beforeend', gameHtml);
-    });
-  }
+	    });
+	  });  
 });
 </script>
 </html>
