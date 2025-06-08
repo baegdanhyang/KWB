@@ -31,13 +31,13 @@ public class TeamController
 	    
 	    // 2. 팀에 해당하는 타자 리스트 조회 
 	    List<HitterDTO> hitterList = teamService.findHitterListByTeam(teamName);
-	    //List<PitcherDTO> pitcherList = teamService.findPitcherListByTeam(teamName);
+	    List<PitcherDTO> pitcherList = teamService.findPitcherListByTeam(teamName);
 	    
-	    System.out.println(hitterList);
+	    System.out.println(pitcherList);
 	    
 	    // 3. 모델에 담기
 	    model.addAttribute("hitterList", hitterList);
-	   // model.addAttribute("pitcherList", pitcherList);
+	    model.addAttribute("pitcherList", pitcherList);
 	    
 	    return "team/detail";
 	}

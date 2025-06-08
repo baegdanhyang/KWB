@@ -163,18 +163,18 @@
 
   <!-- 월 선택 -->
   <div class="month-nav">
-    <div class="month-item">1월</div>
-    <div class="month-item">2월</div>
-    <div class="month-item">3월</div>
-    <div class="month-item">4월</div>
-    <div class="month-item active">5월</div>
-    <div class="month-item">6월</div>
-    <div class="month-item">7월</div>
-    <div class="month-item">8월</div>
-    <div class="month-item">9월</div>
-    <div class="month-item">10월</div>
-    <div class="month-item">11월</div>
-    <div class="month-item">12월</div>
+    <div class="month-item" data-month="1">1월</div>
+    <div class="month-item" data-month="2">2월</div>
+    <div class="month-item" data-month="3">3월</div>
+    <div class="month-item" data-month="4">4월</div>
+    <div class="month-item active" data-month="5">5월</div>
+    <div class="month-item" data-month="6">6월</div>
+    <div class="month-item" data-month="7">7월</div>
+    <div class="month-item" data-month="8">8월</div>
+    <div class="month-item" data-month="9">9월</div>
+    <div class="month-item" data-month="10">10월</div>
+    <div class="month-item" data-month="11">11월</div>
+    <div class="month-item" data-month="12">12월</div>
     <div class="month-item">포스트시즌</div>
   </div>
 
@@ -227,15 +227,20 @@
   </div>
   
   <div class="game-list-container">
-    <div class="game-date">월 일 ()</div>
+    <div th:each="gameDate : ${gameDates}">
+      <div class="game-date" th:text="${gameDate.date}"></div>
 
-    <div class="game-row" >
-      <div class="prediction">예측 최대승률 : %</div>
-      <a th:href="@{/match/detail}"><div class="team-block"> 팀 1</div></a>
-      <div class="vs">vs</div>
-      <a th:href="@{/match/detail}"><div class="team-block"> 팀 2</div></a>
-      <div class="prediction">예측 최대승률 : 	%</div>
-	  <div class="arrow" id="arrowToggle">›</div>
+      <div th:each="game : ${gameDate.games}" class="game-row">
+        <div class="prediction" th:text="'예측 최대승률 : ' + ${game.team1Prediction} + '%'"></div>
+        <a th:href="@{/match/detail}">
+          <div class="team-block" th:text="${game.team1Name}">팀 1</div>
+        </a>
+        <div class="vs">vs</div>
+        <a th:href="@{/match/detail}">
+          <div class="team-block" th:text="${game.team2Name}">팀 2</div>
+        </a>
+        <div class="prediction" th:text="'예측 최대승률 : ' + ${game.team2Prediction} + '%'"></div>
+      </div>
     </div>
   </div>
   
@@ -271,25 +276,53 @@
 
 </body>
 <script>
-     // 월 아이템 클릭 이벤트 처리
-     const monthItems = document.querySelectorAll('.month-item');
+document.addEventListener('DOMContentLoaded', function () {
+  const monthItems = document.querySelectorAll('.month-item');
 
-     monthItems.forEach(item => {
-       item.addEventListener('click', () => {
-         // 기존 active 제거
-         monthItems.forEach(el => el.classList.remove('active'));
-         // 현재 클릭한 아이템에 active 추가
-         item.classList.add('active');
-       });
-     });
-	 
-	 document.getElementById('arrowToggle').addEventListener('click', function () {
-	    const box = document.getElementById('compareBox');
-	    if (box.style.display === 'none') {
-	      box.style.display = 'block';
-	    } else {
-	      box.style.display = 'none';
-	    }
+  monthItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // 기존 active 제거
+      monthItems.forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+
+      const selectedMonth = item.getAttribute('data-month'); // 선택된 월
+
+      // Ajax 요청 보내기
+	      $.ajax({
+	        url: '/match/month', // 예: 컨트롤러에서 처리하는 URL
+	        method: 'GET',
+	        data: { month: selectedMonth },
+	        success: function (html) {
+	          $('.game-list-container').html(html);
+	        },
+	        error: function () {
+	          alert('경기 정보를 불러오는 데 실패했습니다.');
+	        }
+	      });
+	    });
 	  });
-   </script>
+
+  
+  // 렌더링 함수 (필요에 맞게 수정)
+  function renderGameList(games) {
+    const container = document.querySelector('.game-list-container');
+    container.innerHTML = ''; // 기존 내용 제거
+
+    games.forEach(game => {
+      const gameHtml = `
+        <div class="game-date">${game.date}</div>
+        <div class="game-row">
+          <div class="prediction">예측 최대승률 : ${game.prediction1}%</div>
+          <a href="/match/detail/${game.id}"><div class="team-block">${game.team1}</div></a>
+          <div class="vs">vs</div>
+          <a href="/match/detail/${game.id}"><div class="team-block">${game.team2}</div></a>
+          <div class="prediction">예측 최대승률 : ${game.prediction2}%</div>
+          <div class="arrow" id="arrowToggle">›</div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', gameHtml);
+    });
+  }
+});
+</script>
 </html>

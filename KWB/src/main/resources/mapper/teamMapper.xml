@@ -9,6 +9,12 @@
         FROM hitters
         WHERE team = #{teamName}
     </select>
+    
+	<select id="findPitcherListByTeam" resultType="PitcherDTO" parameterType="string">
+        SELECT * 
+        FROM pitchers
+        WHERE team = #{teamName}
+    </select>
   
   
 </mapper>

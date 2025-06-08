@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/match")
-public class Match{
+public class MatchController{
 
 	@GetMapping("/detail")
 	public String register()  {

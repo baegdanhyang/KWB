@@ -141,15 +141,15 @@
 	            </tr>
 	          </thead>
 	          <tbody>
-	            <tr >
-	              <td>1</td>
-	              <td>홍길동</td>
-	              <td>32</td>
-	              <td>128</td>
-	              <td >5</td>
-	              <td >3</td>
-	              <td >3</td>
-	              <td >0.5</td>
+	            <tr th:each="PitcherDTO, stat : ${pitcherList}">
+	              <td th:text="${stat.index + 1}">1</td>
+	              <td th:text="${PitcherDTO.player}">홍길동</td>
+	              <td th:text="${PitcherDTO.G}">32</td>
+	              <td th:text="${PitcherDTO.W}">128</td>
+	              <td th:text="${PitcherDTO.L}">5</td>
+	              <td th:text="${PitcherDTO.IP}">3</td>
+	              <td th:text="${PitcherDTO.ERA}">3</td>
+	              <td th:text="${PitcherDTO.WHIP}">0.5</td>
 	              
 	            </tr>
 	          </tbody>
