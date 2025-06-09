@@ -303,10 +303,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	          html += `<div class="game-date">${gameDate.date}</div>`;
 
 	          gameDate.games.forEach(function(game) {
+				const detailUrl = `/match/detail?hometeam=${encodeURIComponent(game.hometeam)}&awayteam=${encodeURIComponent(game.awayteam)}`;
 	            html += `<div class="game-row">`;
-	            html += `<a href="/match/detail"><div class="team-block">${game.hometeam}</div></a>`;
+	            html += `<a href="${detailUrl}"><div class="team-block">${game.hometeam}</div></a>`;
 	            html += `<div class="vs">vs</div>`;
-	            html += `<a href="/match/detail"><div class="team-block">${game.awayteam}</div></a>`;
+	            html += `<a href="${detailUrl}"><div class="team-block">${game.awayteam}</div></a>`;
 	            html += `</div>`;
 	          });
 

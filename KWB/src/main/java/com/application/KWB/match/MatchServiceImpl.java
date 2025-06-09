@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+
+import com.application.KWB.team.HitterDTO;
+import com.application.KWB.team.PitcherDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -42,6 +46,16 @@ public class MatchServiceImpl implements MatchService{
 	    }
 
 	    return gameDates;
+	}
+
+	@Override
+	public List<HitterDTO> getHitterByTeam(String homeTeam) {
+		return matchDAO.getHitterByTeam(homeTeam);
+	}
+
+	@Override
+	public List<PitcherDTO> getPitcherByTeam(String awayTeam) {
+		return matchDAO.getPitcherByTeam(awayTeam);
 	}
 
 	

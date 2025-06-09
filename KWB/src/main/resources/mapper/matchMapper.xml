@@ -10,6 +10,18 @@
         WHERE MONTH(date) = #{month}
     </select>
     
+    <select id="getHitterByTeam" resultType="PitcherDTO" parameterType="string">
+        SELECT * 
+        FROM pitchers
+        WHERE team = #{teamName}
+    </select>
+    
+    <select id="getPitcherByTeam" resultType="HitterDTO" parameterType="string">
+        SELECT * 
+        FROM hitters
+        WHERE team = #{teamName}
+    </select>
+    
 	
   
   

@@ -1,14 +1,22 @@
 package com.application.KWB.match;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.application.KWB.team.HitterDTO;
+import com.application.KWB.team.PitcherDTO;
 
 
 @Controller
@@ -18,9 +26,26 @@ public class MatchController{
 	private MatchService matchService;
 
 	@GetMapping("/detail")
-	public String register()  {
-		return "match/detail";
-	}
+	public String detail(
+		    @RequestParam("hometeam") String homeTeam,
+		    @RequestParam("awayteam") String awayTeam,
+		    Model model) {
+
+		    // 서비스에서 홈팀 선수 목록 조회s
+		    List<HitterDTO> homeHitters = matchService.getHitterByTeam(homeTeam);
+		    List<PitcherDTO> homePitchers = matchService.getPitcherByTeam(homeTeam);
+
+		    // 서비스에서 어웨이팀 선수 목록 조회
+		    List<HitterDTO> awayHitters = matchService.getHitterByTeam(awayTeam);
+		    List<PitcherDTO> awayPitchers = matchService.getPitcherByTeam(awayTeam);
+
+		    model.addAttribute("homeHitters", homeHitters);
+		    model.addAttribute("homePitchers", homePitchers);
+		    model.addAttribute("awayHitters", awayHitters);
+		    model.addAttribute("awayPitchers", awayPitchers);
+
+		    return "match/detail";  // detail.html 뷰로 전달
+		}
 	
 	@GetMapping("/month")
 	@ResponseBody
@@ -35,5 +60,26 @@ public class MatchController{
 
         return gameDates;
     }
+	
+	@PostMapping("/detail")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> receivePlayers(@RequestBody Map<String, List<String>> players) {
+	    List<String> homeHitters = players.get("homeHitters");
+	    List<String> homePitchers = players.get("homePitchers");
+	    List<String> awayHitters = players.get("awayHitters");
+	    List<String> awayPitchers = players.get("awayPitchers");
+
+	    // 로직 처리 예시
+	    System.out.println("홈 타자: " + homeHitters);
+	    System.out.println("홈 투수: " + homePitchers);
+	    System.out.println("어웨이 타자: " + awayHitters);
+	    System.out.println("어웨이 투수: " + awayPitchers);
+	    
+	    Map<String, String> result = new HashMap<>();
+	    result.put("message", "성공");
+	    return ResponseEntity.ok(result);
+	}
+	
+	
 	
 }

@@ -1,202 +1,188 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Match Detail</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-    }
+<meta charset="UTF-8" />
+<title>Match Detail - 선수 선택</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 20px;
+  }
 
-    .detail-page {
-      max-width: 600px;
-      margin: auto;
-    }
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 40px;
+  }
 
-    .page-title {
-      text-align: center;
-      font-size: 32px;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
+  .team-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
 
-    .match-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fff;
-      padding: 10px;
+  .player-list {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    width: 45%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .player-list h2 {
+    color: #34495e;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+  }
+
+  .player-list h3 {
+    color: #2c3e50;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .btnPlayer {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px; /* 위아래 12px, 좌우 24px */
+    margin: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    min-width: 120px; /* 버튼 너비 최소값 설정 */
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    text-align: center;
+  }
+  .btnPlayer.active {
+    background-color: #2ecc71;  /* 초록색으로 바뀜 */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 8px #27ae60;
+  }
+
+  .btnPlayer:hover {
+    background-color: #2980b9;
+	
+	
+  }
+  
+  #submitBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #e74c3c;
+      color: white;
+      border: none;
       border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .team-card {
-      text-align: center;
-      width: 40%;
-    }
-
-    .team-card img {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-    }
-
-    .vs-text {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .team-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .tab {
-      border: 2px solid black;
-      padding: 8px 20px;
-      border-radius: 20px;
-      background: white;
+      padding: 16px 48px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 6px 12px rgba(231, 76, 60, 0.6);
+      transition: background-color 0.3s ease;
+      z-index: 1000;
     }
 
-    .tab.active {
-      background: black;
-      color: white;
+    #submitBtn:hover {
+      background-color: #c0392b;
     }
-
-    .lineup-card {
-      background: #fff;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .lineup-card h3 {
-      margin-bottom: 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 6px;
-      text-align: center;
-    }
-
-    .pitcher-recommend h3 {
-      margin-bottom: 10px;
-    }
-
-    .pitcher-cards {
-      display: flex;
-      gap: 10px;
-      justify-content: space-between;
-    }
-
-    .pitcher-card {
-      background: #fff;
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-      width: 30%;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .pitcher-card img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-    }
-  </style>
+  
+</style>
 </head>
 <body>
-  <div class="detail-page">
 
+<h1>경기 선수 선택 (Match Detail)</h1>
 
-    <!-- Match Info -->
-    <div class="match-info">
-      <div class="team-card">
-        <div class="team-name" >팀1</div>
-        <img  alt="Home Logo">
-        <div class="pitcher-name" >감독1</div>
-      </div>
-      <div class="vs-text">VS</div>
-      <div class="team-card">
-        <div class="team-name" >팀2</div>
-        <img  alt="Away Logo">
-        <div class="pitcher-name">감독2</div>
-      </div>
-    </div>
+<div class="team-container">
+  <div class="player-list" id="homeTeam">
+    <h2>홈팀 선수 목록</h2>
+	<h3>타자</h3>
+	    <div id="homeHittersContainer" th:each="hitter : ${homeHitters}">
+	      <button type="button" class="btnPlayer"
+	              th:text="${hitter.player}"></button>
+	    </div>
 
-    <!-- Team Tabs -->
-    <div class="team-tabs">
-      <button class="tab active">팀1</button>
-      <button class="tab">팀2</button>
-    </div>
-
-    <!-- Lineup Table -->
-    <div class="lineup-card">
-      <h3>최적 타순</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>이름</th>
-            <th>타율</th>
-            <th>출루율</th>
-            <th>장타율</th>
-            <th>OPS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr >
-            <td>1</td>
-            <td>홍길동</td>
-            <td>0.259</td>
-            <td>0.333</td>
-            <td >0.393</td>
-            <td >0.726</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pitcher Recommendations -->
-    <div class="pitcher-recommend">
-      <h3>Pitchers Recommended</h3>
-      <div class="pitcher-cards">
-        <div class="pitcher-card" >
-			<img alt="투수 사진">
-          <div class="name" >홍길동</div>
-          <div class="desc" >투수 설명</div>
-        </div>
-      </div>
-    </div>
-
+	    <h3>투수</h3>
+	    <div id="homePitchersContainer" th:each="pitcher : ${homePitchers}">
+	      <button type="button" class="btnPlayer"
+	              th:text="${pitcher.player}"></button>
+	    </div>
   </div>
-  <script>
-    const tabs = document.querySelectorAll('.team-tabs .tab');
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // 모든 탭에서 active 클래스 제거
-        tabs.forEach(t => t.classList.remove('active'));
-        // 클릭한 탭에만 active 클래스 추가
-        tab.classList.add('active');
-      });
+  <div class="player-list" id="awayTeam">
+    <h2>어웨이팀 선수 목록</h2>
+	<h3>타자</h3>
+		    <div id="awayHittersContainer" th:each="hitter : ${awayHitters}">
+		      <button type="button" class="btnPlayer"
+		              th:text="${hitter.player}"></button>
+		    </div>
+
+		    <h3>투수</h3>
+		    <div id="awayPitchersContainer" th:each="pitcher : ${awayPitchers}">
+		      <button type="button" class="btnPlayer"
+		              th:text="${pitcher.player}"></button>
+		    </div>
+  </div>
+</div>
+
+<button id="submitBtn" type="button">선수 제출하기</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const submitBtn = document.getElementById('submitBtn');
+
+  // 버튼 토글
+  document.querySelectorAll('.btnPlayer').forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('active');
     });
-  </script>
+  });
+
+  // 제출 버튼 클릭 시
+  submitBtn.addEventListener('click', () => {
+    // 각 구역에서 활성화된 선수 수집
+    const getActivePlayers = (containerId) => {
+      return Array.from(document.querySelectorAll(`#${containerId} .btnPlayer.active`))
+                  .map(btn => btn.textContent.trim());
+    };
+
+    const data = {
+      homeHitters: getActivePlayers("homeHittersContainer"),
+      homePitchers: getActivePlayers("homePitchersContainer"),
+      awayHitters: getActivePlayers("awayHittersContainer"),
+      awayPitchers: getActivePlayers("awayPitchersContainer"),
+    };
+
+    // 전송
+    fetch('/match/detail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("서버 오류");
+      return response.json();
+    })
+    .then(result => {
+      alert("선수 목록이 성공적으로 제출되었습니다.");
+      console.log(result);
+    })
+    .catch(err => {
+      console.error(err);
+      alert("제출 중 오류가 발생했습니다.");
+    });
+  });
+});
+</script>
+
+
 </body>
 </html>
