@@ -10,20 +10,17 @@
     margin: 0;
     padding: 20px;
   }
-
   h1 {
     text-align: center;
     color: #2c3e50;
     margin-bottom: 40px;
   }
-
   .team-container {
     display: flex;
     justify-content: space-around;
     gap: 20px;
     flex-wrap: wrap;
   }
-
   .player-list {
     background-color: #ffffff;
     border: 1px solid #ddd;
@@ -32,69 +29,70 @@
     width: 45%;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
-
   .player-list h2 {
     color: #34495e;
     margin-bottom: 10px;
     border-bottom: 2px solid #3498db;
     padding-bottom: 5px;
   }
-
   .player-list h3 {
     color: #2c3e50;
     margin-top: 20px;
     margin-bottom: 10px;
   }
-
   .btnPlayer {
     background-color: #3498db;
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px; /* 위아래 12px, 좌우 24px */
+    padding: 12px 24px;
     margin: 6px;
     cursor: pointer;
     font-size: 16px;
-    min-width: 120px; /* 버튼 너비 최소값 설정 */
+    min-width: 120px;
     transition: background-color 0.3s ease;
     display: inline-block;
     text-align: center;
   }
   .btnPlayer.active {
-    background-color: #2ecc71;  /* 초록색으로 바뀜 */
+    background-color: #2ecc71;
     color: white;
     font-weight: bold;
     box-shadow: 0 0 8px #27ae60;
   }
-
   .btnPlayer:hover {
     background-color: #2980b9;
-	
-	
   }
-  
-  #submitBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 48px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 6px 12px rgba(231, 76, 60, 0.6);
-      transition: background-color 0.3s ease;
-      z-index: 1000;
-    }
-
-    #submitBtn:hover {
-      background-color: #c0392b;
-    }
-  
+  #runSimulationBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 48px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.6);
+    transition: background-color 0.3s ease;
+    z-index: 1000;
+  }
+  #runSimulationBtn:hover {
+    background-color: #c0392b;
+  }
+  #simulationResult {
+    margin: 40px auto 0 auto;
+    padding: 24px;
+    background: #f8f8ff;
+    border-radius: 10px;
+    width: 60%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    font-size: 16px;
+    color: #222;
+  }
 </style>
 </head>
 <body>
@@ -104,64 +102,67 @@
 <div class="team-container">
   <div class="player-list" id="homeTeam">
     <h2>홈팀 선수 목록</h2>
-	<h3>타자</h3>
-	    <div id="homeHittersContainer" th:each="hitter : ${homeHitters}">
-	      <button type="button" class="btnPlayer"
-	              th:text="${hitter.player}"></button>
-	    </div>
-
-	    <h3>투수</h3>
-	    <div id="homePitchersContainer" th:each="pitcher : ${homePitchers}">
-	      <button type="button" class="btnPlayer"
-	              th:text="${pitcher.player}"></button>
-	    </div>
+    <h3>타자</h3>
+    <div id="homeHittersContainer" th:each="hitter : ${homeHitters}">
+      <button type="button" class="btnPlayer"
+              th:text="${hitter.player}"></button>
+    </div>
+    <h3>투수</h3>
+    <div id="homePitchersContainer" th:each="pitcher : ${homePitchers}">
+      <button type="button" class="btnPlayer"
+              th:text="${pitcher.player}"></button>
+    </div>
   </div>
-
   <div class="player-list" id="awayTeam">
     <h2>어웨이팀 선수 목록</h2>
-	<h3>타자</h3>
-		    <div id="awayHittersContainer" th:each="hitter : ${awayHitters}">
-		      <button type="button" class="btnPlayer"
-		              th:text="${hitter.player}"></button>
-		    </div>
-
-		    <h3>투수</h3>
-		    <div id="awayPitchersContainer" th:each="pitcher : ${awayPitchers}">
-		      <button type="button" class="btnPlayer"
-		              th:text="${pitcher.player}"></button>
-		    </div>
+    <h3>타자</h3>
+    <div id="awayHittersContainer" th:each="hitter : ${awayHitters}">
+      <button type="button" class="btnPlayer"
+              th:text="${hitter.player}"></button>
+    </div>
+    <h3>투수</h3>
+    <div id="awayPitchersContainer" th:each="pitcher : ${awayPitchers}">
+      <button type="button" class="btnPlayer"
+              th:text="${pitcher.player}"></button>
+    </div>
   </div>
 </div>
 
 <button id="submitBtn" type="button">선수 제출하기</button>
+<button id="runSimulationBtn" type="button">시뮬레이션 실행</button>
+
+<div id="simulationResult"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const submitBtn = document.getElementById('submitBtn');
+  const runSimBtn = document.getElementById('runSimulationBtn');
 
   // 버튼 토글
   document.querySelectorAll('.btnPlayer').forEach(button => {
     button.addEventListener('click', () => {
-      button.classList.toggle('active');
+      // 투수는 하나만 선택
+      if (button.parentElement.id.includes("PitchersContainer")) {
+        document.querySelectorAll(`#${button.parentElement.id} .btnPlayer`).forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+      } else {
+        button.classList.toggle('active');
+      }
     });
   });
 
-  // 제출 버튼 클릭 시
+  // 선수 제출 버튼 (기존 기능)
   submitBtn.addEventListener('click', () => {
-    // 각 구역에서 활성화된 선수 수집
     const getActivePlayers = (containerId) => {
       return Array.from(document.querySelectorAll(`#${containerId} .btnPlayer.active`))
                   .map(btn => btn.textContent.trim());
     };
-
     const data = {
       homeHitters: getActivePlayers("homeHittersContainer"),
       homePitchers: getActivePlayers("homePitchersContainer"),
       awayHitters: getActivePlayers("awayHittersContainer"),
       awayPitchers: getActivePlayers("awayPitchersContainer"),
     };
-
-    // 전송
     fetch('/match/detail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -180,9 +181,63 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("제출 중 오류가 발생했습니다.");
     });
   });
+
+  // 시뮬레이션 실행 버튼 (신규 기능)
+  runSimBtn.addEventListener('click', async () => {
+    const getActivePlayers = (containerId) => {
+      return Array.from(document.querySelectorAll(`#${containerId} .btnPlayer.active`))
+                  .map(btn => btn.textContent.trim());
+    };
+    const homeHitters = getActivePlayers("homeHittersContainer");
+    const homePitchers = getActivePlayers("homePitchersContainer");
+    const awayHitters = getActivePlayers("awayHittersContainer");
+    const awayPitchers = getActivePlayers("awayPitchersContainer");
+
+    if (homeHitters.length !== 9 || awayHitters.length !== 9) {
+      alert('타자는 반드시 9명씩 선택해야 합니다.');
+      return;
+    }
+    if (homePitchers.length !== 1 || awayPitchers.length !== 1) {
+      alert('투수는 반드시 1명씩 선택해야 합니다.');
+      return;
+    }
+
+    const requestBody = {
+      homeBatters: homeHitters,
+      homePitchers: homePitchers,
+      awayBatters: awayHitters,
+      awayPitchers: awayPitchers,
+      matchCount: 1000 // 필요하면 입력값으로 변경
+    };
+
+    document.getElementById('simulationResult').innerHTML = "<b>시뮬레이션 실행 중...</b>";
+
+    try {
+      const response = await fetch('/simulation/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      if (!response.ok) throw new Error('서버 오류');
+      const result = await response.json();
+
+      document.getElementById('simulationResult').innerHTML = `
+        <h3>시뮬레이션 결과</h3>
+        <div>홈팀 승: ${result.team_A_win_count}</div>
+        <div>어웨이팀 승: ${result.team_B_win_count}</div>
+        <div>무승부: ${result.draw_count}</div>
+        <div>홈팀 평균 득점: ${result.team_A_avg_score.toFixed(3)}</div>
+        <div>어웨이팀 평균 득점: ${result.team_B_avg_score.toFixed(3)}</div>
+        <div>홈팀 승률: ${(result.team_A_win_rate * 100).toFixed(1)}%</div>
+        <div>어웨이팀 승률: ${(result.team_B_win_rate * 100).toFixed(1)}%</div>
+        <div>무승부 비율: ${(result.draw_rate * 100).toFixed(1)}%</div>
+      `;
+    } catch (err) {
+      document.getElementById('simulationResult').innerHTML = "<b>오류가 발생했습니다: " + err.message + "</b>";
+    }
+  });
 });
 </script>
-
 
 </body>
 </html>
