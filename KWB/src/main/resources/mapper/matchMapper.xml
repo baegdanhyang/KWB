@@ -12,13 +12,13 @@
     
     <select id="getHitterByTeam" resultType="PitcherDTO" parameterType="string">
         SELECT * 
-        FROM pitchers
+        FROM hitters
         WHERE team = #{teamName}
     </select>
     
     <select id="getPitcherByTeam" resultType="HitterDTO" parameterType="string">
         SELECT * 
-        FROM hitters
+        FROM pitchers
         WHERE team = #{teamName}
     </select>
     
