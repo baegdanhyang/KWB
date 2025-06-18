@@ -103,98 +103,110 @@
   <div class="player-list" id="homeTeam">
     <h2>홈팀 선수 목록</h2>
     <h3>타자</h3>
-    <div id="homeHittersContainer" th:each="hitter : ${homeHitters}">
-      <button type="button" class="btnPlayer"
-              th:text="${hitter.player}"></button>
+    <div id="homeHittersContainer">
+      <div class="player-row" th:each="hitter : ${homeHitters}">
+        <button type="button" class="btnPlayer" th:text="${hitter.player}"></button>
+        <select class="battingOrderSelect">
+          <option value="">타순 선택</option>
+          <option value="1">1번</option>
+          <option value="2">2번</option>
+          <option value="3">3번</option>
+          <option value="4">4번</option>
+          <option value="5">5번</option>
+          <option value="6">6번</option>
+          <option value="7">7번</option>
+          <option value="8">8번</option>
+          <option value="9">9번</option>
+        </select>
+      </div>
     </div>
     <h3>투수</h3>
     <div id="homePitchersContainer" th:each="pitcher : ${homePitchers}">
-      <button type="button" class="btnPlayer"
-              th:text="${pitcher.player}"></button>
+      <button type="button" class="btnPlayer" th:text="${pitcher.player}"></button>
     </div>
   </div>
+
   <div class="player-list" id="awayTeam">
     <h2>어웨이팀 선수 목록</h2>
     <h3>타자</h3>
-    <div id="awayHittersContainer" th:each="hitter : ${awayHitters}">
-      <button type="button" class="btnPlayer"
-              th:text="${hitter.player}"></button>
+    <div id="awayHittersContainer">
+      <div class="player-row" th:each="hitter : ${awayHitters}">
+        <button type="button" class="btnPlayer" th:text="${hitter.player}"></button>
+        <select class="battingOrderSelect">
+          <option value="">타순 선택</option>
+          <option value="1">1번</option>
+          <option value="2">2번</option>
+          <option value="3">3번</option>
+          <option value="4">4번</option>
+          <option value="5">5번</option>
+          <option value="6">6번</option>
+          <option value="7">7번</option>
+          <option value="8">8번</option>
+          <option value="9">9번</option>
+        </select>
+      </div>
     </div>
     <h3>투수</h3>
     <div id="awayPitchersContainer" th:each="pitcher : ${awayPitchers}">
-      <button type="button" class="btnPlayer"
-              th:text="${pitcher.player}"></button>
+      <button type="button" class="btnPlayer" th:text="${pitcher.player}"></button>
     </div>
   </div>
 </div>
 
-<button id="submitBtn" type="button">선수 제출하기</button>
 <button id="runSimulationBtn" type="button">시뮬레이션 실행</button>
 
 <div id="simulationResult"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const submitBtn = document.getElementById('submitBtn');
   const runSimBtn = document.getElementById('runSimulationBtn');
 
-  // 버튼 토글
-  document.querySelectorAll('.btnPlayer').forEach(button => {
-    button.addEventListener('click', () => {
-      // 투수는 하나만 선택
-      if (button.parentElement.id.includes("PitchersContainer")) {
-        document.querySelectorAll(`#${button.parentElement.id} .btnPlayer`).forEach(b => b.classList.remove('active'));
+  // 투수 버튼: 하나만 선택 가능
+  document.querySelectorAll('#homePitchersContainer .btnPlayer, #awayPitchersContainer .btnPlayer')
+    .forEach(button => {
+      button.addEventListener('click', () => {
+        const container = button.parentElement;
+        container.querySelectorAll('.btnPlayer').forEach(b => b.classList.remove('active'));
         button.classList.add('active');
-      } else {
-        button.classList.toggle('active');
+      });
+    });
+
+  function getOrderedBatters(containerId) {
+    const playerRows = document.querySelectorAll(`#${containerId} .player-row`);
+    const orderMap = [];
+
+    playerRows.forEach(row => {
+      const name = row.querySelector('.btnPlayer').textContent.trim();
+      const order = row.querySelector('.battingOrderSelect').value;
+      if (order) {
+        orderMap.push({ order: parseInt(order), name });
       }
     });
-  });
 
-  // 선수 제출 버튼 (기존 기능)
-  submitBtn.addEventListener('click', () => {
-    const getActivePlayers = (containerId) => {
-      return Array.from(document.querySelectorAll(`#${containerId} .btnPlayer.active`))
-                  .map(btn => btn.textContent.trim());
-    };
-    const data = {
-      homeHitters: getActivePlayers("homeHittersContainer"),
-      homePitchers: getActivePlayers("homePitchersContainer"),
-      awayHitters: getActivePlayers("awayHittersContainer"),
-      awayPitchers: getActivePlayers("awayPitchersContainer"),
-    };
-    fetch('/match/detail', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    .then(response => {
-      if (!response.ok) throw new Error("서버 오류");
-      return response.json();
-    })
-    .then(result => {
-      alert("선수 목록이 성공적으로 제출되었습니다.");
-      console.log(result);
-    })
-    .catch(err => {
-      console.error(err);
-      alert("제출 중 오류가 발생했습니다.");
-    });
-  });
+    // 중복 확인
+    const orders = orderMap.map(o => o.order);
+    const uniqueOrders = new Set(orders);
+    if (orders.length !== 9 || uniqueOrders.size !== 9) {
+      return null; // 잘못된 경우
+    }
 
-  // 시뮬레이션 실행 버튼 (신규 기능)
+    orderMap.sort((a, b) => a.order - b.order);
+    return orderMap.map(o => o.name);
+  }
+
+  function getPitcher(containerId) {
+    const activeBtn = document.querySelector(`#${containerId} .btnPlayer.active`);
+    return activeBtn ? [activeBtn.textContent.trim()] : [];
+  }
+
   runSimBtn.addEventListener('click', async () => {
-    const getActivePlayers = (containerId) => {
-      return Array.from(document.querySelectorAll(`#${containerId} .btnPlayer.active`))
-                  .map(btn => btn.textContent.trim());
-    };
-    const homeHitters = getActivePlayers("homeHittersContainer");
-    const homePitchers = getActivePlayers("homePitchersContainer");
-    const awayHitters = getActivePlayers("awayHittersContainer");
-    const awayPitchers = getActivePlayers("awayPitchersContainer");
+    const homeHitters = getOrderedBatters("homeHittersContainer");
+    const awayHitters = getOrderedBatters("awayHittersContainer");
+    const homePitchers = getPitcher("homePitchersContainer");
+    const awayPitchers = getPitcher("awayPitchersContainer");
 
-    if (homeHitters.length !== 9 || awayHitters.length !== 9) {
-      alert('타자는 반드시 9명씩 선택해야 합니다.');
+    if (!homeHitters || !awayHitters) {
+      alert('각 팀 타자 9명의 타순(1~9번)을 정확히 지정해야 합니다.');
       return;
     }
     if (homePitchers.length !== 1 || awayPitchers.length !== 1) {
@@ -207,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
       homePitchers: homePitchers,
       awayBatters: awayHitters,
       awayPitchers: awayPitchers,
-      matchCount: 1000 // 필요하면 입력값으로 변경
+      matchCount: 1000
     };
 
     document.getElementById('simulationResult').innerHTML = "<b>시뮬레이션 실행 중...</b>";
@@ -218,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody)
       });
+
       if (!response.ok) throw new Error('서버 오류');
       const result = await response.json();
 
