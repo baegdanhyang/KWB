@@ -121,9 +121,12 @@
       <div class="player-row" th:each="pitcher : ${homePitchers}">
         <button type="button" class="btnPlayer" th:text="${pitcher.player}"></button>
         <select class="pitchingOrderSelect">
-          <option value="">--선택--</option>
-          <option th:each="i : ${#numbers.sequence(1,5)}"
-                  th:value="${i}" th:text="${i} + '번 투수'"></option>
+			<option value="">--선택--</option>
+		    <option value="1">선발투수</option>
+		    <option value="2">중간계투1</option>
+		    <option value="3">중간계투2</option>
+		    <option value="4">중간계투3</option>
+		    <option value="5">마무리투수</option>
         </select>
       </div>
     </div>
@@ -146,16 +149,19 @@
     </div>
 
     <h3>투수</h3>
-    <div id="awayPitchersContainer">
-      <div class="player-row" th:each="pitcher : ${awayPitchers}">
-        <button type="button" class="btnPlayer" th:text="${pitcher.player}"></button>
-        <select class="pitchingOrderSelect">
-          <option value="">--선택--</option>
-          <option th:each="i : ${#numbers.sequence(1,5)}"
-                  th:value="${i}" th:text="${i} + '번 투수'"></option>
-        </select>
-      </div>
-    </div>
+	<div id="awayPitchersContainer">
+	  <div class="player-row" th:each="pitcher : ${awayPitchers}">
+	    <button type="button" class="btnPlayer" th:text="${pitcher.player}"></button>
+	    <select class="pitchingOrderSelect">
+	      <option value="">--선택--</option>
+	      <option value="1">선발투수</option>
+	      <option value="2">중간계투1</option>
+	      <option value="3">중간계투2</option>
+	      <option value="4">중간계투3</option>
+	      <option value="5">마무리투수</option>
+	    </select>
+	  </div>
+	</div>
   </div>
 </div>
 
